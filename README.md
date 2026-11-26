@@ -17,7 +17,7 @@ AI coding agents: read [`AGENTS.md`](./AGENTS.md) first.
 ## Quick start
 
 ```bash
-git clone https://github.com/whattflib123/open-chart-desk.git
+git clone https://github.com/Threads-whattflib/open-chart-desk.git
 cd open-chart-desk
 cp .env.example .env          # optional: set AUTH_PASSWORD, Telegram, webhook
 docker compose up -d --build
