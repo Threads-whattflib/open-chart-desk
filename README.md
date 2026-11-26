@@ -44,6 +44,9 @@ By default the port is bound to **127.0.0.1 only**. To use it from your phone on
 | `ALERT_INTERVAL` | `15` | Seconds between alert price checks (min 5) |
 | `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` | empty | Send triggered alerts to Telegram |
 | `ALERT_WEBHOOK_URL` | empty | POST triggered alerts as JSON (`text` for Slack, `content` for Discord, plus raw fields) |
+
+Test the channels after setting them: `curl -u admin:<password> -X POST http://127.0.0.1:8510/api/alerts/test` sends one
+test message and reports `ok` or the error per channel.
 | `LOGO_SOURCE` | `favicon` | Symbol icons: `favicon` (company website icon), `tradingview` (unofficial endpoint — may break their ToS, your call), `none` |
 
 Data (bar cache, drawings, watchlist, settings, alerts) lives in the `chart-data` volume at `/app/data`. Deleting
