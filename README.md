@@ -1,5 +1,7 @@
 # open-chart-desk
 
+[![image](https://github.com/Threads-whattflib/open-chart-desk/actions/workflows/image.yml/badge.svg)](https://github.com/Threads-whattflib/open-chart-desk/actions/workflows/image.yml) ![license](https://img.shields.io/badge/license-MIT-blue)
+
 A self-hosted, TradingView-style charting web app for **crypto, Taiwan stocks and US stocks**:
 drawing tools that persist on your server, watchlists, indicators, price alerts (Telegram / webhook),
 and a phone layout modelled on mobile charting apps. One Docker container, no account, no paid data feed.
