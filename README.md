@@ -59,6 +59,9 @@ Data (bar cache, drawings, watchlist, settings, alerts) lives in the `chart-data
 - **Markets**: crypto (Binance spot, falls back to Bybit), Taiwan stocks (Yahoo + TWSE MIS real-time price),
   US stocks / ETFs / indices / futures in Yahoo notation (`^VIX`, `GC=F`). Type anywhere to search.
 - **Intervals**: crypto 1m … 1M (11); stocks 1m, 5m, 15m, 30m, 1h, 1D, 1W, 1M.
+- **Default watchlist**: 79 symbols in themed groups (crypto majors, Taiwan semis / AI servers, US big tech / AI semis /
+  ETFs / indices) — edit `DEFAULT_WATCH` in `web/src/types.ts`, or just change it in the app (saved server-side). First load
+  of prices takes 10–20 s while Yahoo is queried; cached after that.
 - **Live**: crypto via Binance WebSocket relay; TW every 5 s; US every 20 s. US pre/post-market in intraday bars and watchlist.
 - **Local bar database** (SQLite): charts open from disk, only the tail is fetched; watchlist × favourite intervals pre-synced.
 - **Chart**: candles / line, volume, log scale, auto-scale toggle, crosshair legend, infinite scroll back, quick ranges.
