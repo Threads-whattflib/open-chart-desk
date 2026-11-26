@@ -1,0 +1,12 @@
+open-chart-desk includes or depends on the following third-party software:
+
+- TradingView Lightweight Charts (https://github.com/tradingview/lightweight-charts)
+  Copyright (c) 2025 TradingView, Inc. Licensed under the Apache License, Version 2.0.
+  The chart keeps the library's attribution logo (attributionLogo: true) as its license asks.
+- cryptocurrency-icons (https://github.com/spothq/cryptocurrency-icons) — CC0 1.0.
+- JetBrains Mono via @fontsource/jetbrains-mono — SIL Open Font License 1.1.
+- React — MIT. FastAPI, Uvicorn, Requests, Pillow — MIT / BSD / HPND. yfinance — Apache 2.0.
+
+This project is not affiliated with or endorsed by TradingView, Binance, Bybit, Yahoo, or the Taiwan Stock Exchange.
+Market data comes from those third parties' public endpoints and is subject to their terms; it is for personal use only
+and may be delayed or wrong. Nothing here is investment advice.

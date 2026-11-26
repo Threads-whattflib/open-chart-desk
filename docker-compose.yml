@@ -1,0 +1,15 @@
+services:
+  chart:
+    build: .
+    # 預設只開給本機（127.0.0.1）。要給區網其他裝置用：改成 "8510:8510"，並在 .env 設 AUTH_PASSWORD。
+    ports:
+      - "127.0.0.1:${PORT:-8510}:8510"
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - chart-data:/app/data   # 具名 volume：權限跟映像裡的 app 使用者一致
+    restart: unless-stopped
+
+volumes:
+  chart-data:

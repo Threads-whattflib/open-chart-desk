@@ -1,0 +1,9 @@
+**/node_modules
+web/dist
+web/public/coins
+data
+.env*
+!.env.example
+.git
+**/__pycache__
+shots

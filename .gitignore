@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+*.pyc
+node_modules/
+web/dist/
+data/
+.env*
+!.env.example
+*.tsbuildinfo
+.DS_Store
+shots/
+web/public/coins/
