@@ -18,9 +18,11 @@
    - `curl -u admin:$AUTH_PASSWORD "http://127.0.0.1:8510/api/bars?market=crypto&symbol=BTCUSDT&iv=1h&limit=3"`
      returns JSON with `t/o/h/l/c/v` arrays.
    - Open the page on a desktop browser **and** a phone-sized viewport (390 px wide).
-6. Test alerts without waiting for the market: POST `{"market":"crypto","symbol":"BTCUSDT","price":2,"last":1,"note":"test"}`
-   to `/api/alerts` — target 2 above "last" 1 makes it an "above" alert that fires on the next check. Confirm the
-   notification arrived, then tell the user it was a test.
+6. Test the notification channels: `curl -u admin:$AUTH_PASSWORD -X POST http://127.0.0.1:8510/api/alerts/test`.
+   It sends one test message right away and returns `{"channels": {"telegram": "ok", "webhook": "ok"}, "configured": true}`
+   (`configured: false` = no channel set in `.env`; anything other than `"ok"` is the error). Confirm the message
+   arrived, then tell the user it was a test. Real alerts take their direction from the live server-side quote, so a
+   fake price can't trigger one — don't try.
 
 ## Modifying the code
 

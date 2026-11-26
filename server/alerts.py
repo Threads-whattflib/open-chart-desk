@@ -3,7 +3,7 @@
 
 方向在建立時決定：目標價在現價上面＝向上穿越（現價 >= 目標價觸發），下面＝向下穿越（現價 <= 目標價觸發）。
 
-通知管道（環境變數，可以同時開；都沒設也會觸發，只是只寫 log）：
+通知管道（環境變數，可以同時開；都沒設也會觸發，只是只寫 log）。POST /api/alerts/test 直接送一則測試通知：
   TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID   Telegram 私訊或群組
   ALERT_WEBHOOK_URL                       POST JSON {"text", "content", "market", "symbol", "price", "target", "direction", "note"}
                                           （text 給 Slack，content 給 Discord，其他欄位給自己的服務）
@@ -107,27 +107,40 @@ def _fmt(v: float) -> str:
     return f"{v:,.2f}" if v >= 1 else f"{v:.6g}"
 
 
-def _notify(a: sqlite3.Row, price: float) -> None:
-    arrow = "↑ 向上穿越" if a["direction"] == "above" else "↓ 向下穿越"
-    text = f"⏰ {a['symbol']} {arrow} {_fmt(a['target'])}\n現價 {_fmt(price)}" + (f"\n{a['note']}" if a["note"] else "")
+def _send(text: str, fields: dict) -> dict[str, str]:
+    """送到每個有設定的管道，回傳 {管道: "ok" 或錯誤}（沒設的管道不出現）。"""
+    out: dict[str, str] = {}
     if TG_TOKEN and TG_CHAT:
         try:
             r = requests.post(f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage",
                               json={"chat_id": TG_CHAT, "text": text}, timeout=10)
-            if not r.ok:
-                _log(f"[WARN] telegram {r.status_code}")
+            out["telegram"] = "ok" if r.ok else f"HTTP {r.status_code}"
         except requests.RequestException as e:
-            _log(f"[WARN] telegram {type(e).__name__}")
+            out["telegram"] = type(e).__name__
     if WEBHOOK:
         try:
-            r = requests.post(WEBHOOK, timeout=10, json={
-                "text": text, "content": text, "market": a["market"], "symbol": a["symbol"], "price": price,
-                "target": a["target"], "direction": a["direction"], "note": a["note"]})
-            if not r.ok:
-                _log(f"[WARN] webhook {r.status_code}")
+            r = requests.post(WEBHOOK, timeout=10, json={"text": text, "content": text, **fields})
+            out["webhook"] = "ok" if r.ok else f"HTTP {r.status_code}"
         except requests.RequestException as e:
-            _log(f"[WARN] webhook {type(e).__name__}")
+            out["webhook"] = type(e).__name__
+    for ch, res in out.items():
+        if res != "ok":
+            _log(f"[WARN] {ch} {res}")
     _log(text.replace("\n", " | "))
+    return out
+
+
+def _notify(a: sqlite3.Row, price: float) -> None:
+    arrow = "↑ 向上穿越" if a["direction"] == "above" else "↓ 向下穿越"
+    text = f"⏰ {a['symbol']} {arrow} {_fmt(a['target'])}\n現價 {_fmt(price)}" + (f"\n{a['note']}" if a["note"] else "")
+    _send(text, {"market": a["market"], "symbol": a["symbol"], "price": price,
+                 "target": a["target"], "direction": a["direction"], "note": a["note"]})
+
+
+def send_test() -> dict:
+    """架站後驗證通知管道用：不看價格，直接送一則測試訊息。"""
+    res = _send("✅ open-chart-desk 測試通知：收到這則代表價格提醒的通知管道設定正確", {"test": True})
+    return {"channels": res, "configured": bool(res)}
 
 
 def check_once() -> int:

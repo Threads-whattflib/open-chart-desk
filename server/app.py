@@ -219,6 +219,11 @@ def alerts_create(body: dict = Body(...)):
     return alerts.create(market, symbol, price, last, str(body.get("note", "")))
 
 
+@app.post("/api/alerts/test")
+def alerts_test():
+    return alerts.send_test()
+
+
 @app.delete("/api/alerts/{aid}")
 def alerts_delete(aid: int):
     alerts.delete(aid)
