@@ -249,15 +249,17 @@ def put_drawings(market: str, symbol: str, items: list[dict] = Body(...)):
     return {"ok": True, "n": len(items)}
 
 
+# state 是開頁面第一個要等的請求：用 async（小 JSON 檔，在事件迴圈上讀寫很快），
+# 不跟 bars 等慢的同步請求搶執行緒池。冷快取時快速切換商品會塞滿執行緒池，同步版要排隊近 10 秒，頁面卡在「載入中」
 @app.get("/api/state/{key}")
-def get_state(key: str):
+async def get_state(key: str):
     if key not in STATE_KEYS:
         raise HTTPException(404)
     return JSONResponse(_read(DATA_DIR / f"{key}.json", None))
 
 
 @app.put("/api/state/{key}")
-def put_state(key: str, value=Body(...)):
+async def put_state(key: str, value=Body(...)):
     if key not in STATE_KEYS:
         raise HTTPException(404)
     if len(json.dumps(value)) > 200_000:

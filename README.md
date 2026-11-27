@@ -86,6 +86,16 @@ cd server && ../venv/bin/python -u -m uvicorn app:app --host 127.0.0.1 --port 85
 # frontend hot reload: cd web && npm run dev   (http://127.0.0.1:5173, proxies /api and /ws to 8510)
 ```
 
+### Random-click test (optional)
+
+[Bombadil](https://github.com/antithesishq/bombadil) clicks around the UI at random and checks the rules in `tests/bombadil/spec.ts` (JS errors, failed API calls, `NaN` on screen, horizontal scroll). It presses **every** button — run it against a local copy only, with alerts off and a throwaway data dir:
+
+```bash
+cd server && env -u TELEGRAM_BOT_TOKEN -u ALERT_WEBHOOK_URL CHART_DESK_DATA=/tmp/ocd-test \
+  ../venv/bin/python -u -m uvicorn app:app --host 127.0.0.1 --port 8510 &
+cd .. && bombadil browser test --headless --time-limit 3m --width 1440 --height 900 http://127.0.0.1:8510/ tests/bombadil/spec.ts
+```
+
 ## Layout
 
 ```
