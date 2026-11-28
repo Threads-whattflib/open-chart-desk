@@ -29,16 +29,20 @@ export function Wheel<T>({ items, index, onPick, onTap, render, label, className
   // 外部換了商品 / 週期、或清單長度變了：對回中間那一份。使用者正在滾的時候不動它（不然會被拉回去）
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { const s = st.current; if (ref.current && !s.touching && !s.rolling) home(ref.current); }, [index, n]);
+  // 卸載時清掉還沒觸發的計時器（例：滾完 170ms 內按「收起工具列」，滾輪被拿掉）
+  useEffect(() => () => clearTimeout(st.current.timer), []);
   const settle = () => {
     const el = ref.current, s = st.current;
     clearTimeout(s.timer);
     if (!s.self) s.rolling = true;
     s.timer = window.setTimeout(() => {
-      if (!el || !n) return;
+      // 元素已不在畫面上（或高度 0）時 scrollTop / clientHeight 會是 NaN，onPick(NaN) 會把 undefined 當商品傳出去、整頁掛掉
+      if (!el || !n || !el.isConnected || !el.clientHeight) return;
       if (s.touching) { settle(); return; }          // 手指還按著：等放開
       s.rolling = false;
       if (s.self) { s.self = false; return; }
       const i = ((Math.round(el.scrollTop / el.clientHeight) % n) + n) % n;
+      if (!Number.isInteger(i)) return;
       if (i !== index) onPick(i); else home(el);
     }, 170);
   };
